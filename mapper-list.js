@@ -223,5 +223,5 @@ const MapperList = [{
     selfFlashable: false,
 
     notes: `This is a powerful mapper, similar to mmc3, but with the addition of expansion audio. This was used in sunsoft games back in the day. InfiniteNESLives has a modern verison of this board
-            that has been up for sale in the past. Note that it has a cpu cycle counter, but no scanline counter.`
+            that has been up for sale in the past. Note that it has a cpu cycle counter, but no scanline counter. Note that FME-7 supports 512k prg, however 5B only supports 256k prg.`
 }];
