@@ -4,6 +4,7 @@ app.component('base-component', {
             MapperList,
             MapperOptions,
             requirements: [],
+            tipVisibility: [],
             feasibleMappers: [],
             hideUnavailableMappers: false
         }
@@ -11,9 +12,13 @@ app.component('base-component', {
     created: function() {
         this.MapperOptions.forEach(option => {
             // Default everything to don't care.
-            this.requirements[option.field] = null;
+            this.requirements[option.field] = option.defaultOption ?? null;
+            this.tipVisibility[option.field] = false;
         });
         this.recalculateFeasibleMappers();
+    },
+    mounted: function() {
+        document.addEventListener('click', this.outsideClick);
     },
     methods: {
         recalculateFeasibleMappers() {
@@ -28,6 +33,7 @@ app.component('base-component', {
 
                     if (option.comparison === 'max' && fieldValue > mapper[fieldName]) { mapperIsValid = false; }
                     else if (option.comparison === 'exact' && fieldValue !== mapper[fieldName]) { mapperIsValid = false; }
+                    else if (option.comparison === 'min' && fieldValue < mapper[fieldName]) { mapperIsValid = false; }
 
                 });
                 return mapperIsValid;
@@ -36,9 +42,23 @@ app.component('base-component', {
             this.feasibleMappers = mappers;
         },
         updateField(option, v) {
-            this.requirements[option.field] = v;
+            this.requirements[option.field] = isNaN(v) ? null : v;
             console.info('updated', this.requirements, arguments);
             this.recalculateFeasibleMappers();
+        },
+        mapperOptionValue(mapper, opt) {
+            const foundOption = Object.entries(opt.options).find(e => e[1] === mapper[opt.field])
+            if (foundOption) {
+                return foundOption[0];
+            } else {
+                console.warn(`[WARNING] mapper ${mapper.name} field ${opt.field} not defined!`);
+                return 'Unknown (app error)';
+            }
+        },
+        outsideClick() {
+            this.MapperOptions.forEach(option => {
+                this.tipVisibility[option.field] = false;
+            });
         }
     },
     // NOTE: Use es6-string-html module for vs code to make this highlight
@@ -52,22 +72,40 @@ app.component('base-component', {
             <div class="row align-items-start">
                 <div class="col-sm-6 col-md-8 col-lg-8">
                     <h3>Requirements</h3>
-                    <div v-for="option in MapperOptions">
-                        <div v-if="option.type === 'dropdown'">
-                            <strong>{{option.name}}:</strong>
-                            <select class="form-select" v-on:change="updateField(option, parseInt($event.target.value, 10))">
-                                <option v-for="(v, k) in option.options" v-bind:value="v">{{k}}</option>
-                            </select>
-                        </div>
-                        <div v-else-if="option.type === 'radio'">
-                            <strong>{{option.name}}</strong>: 
-                            <div v-for="(v, k) in option.options" class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" v-bind:name="option.field" v-bind:id="option.field + '-' + v" v-bind:value="v" v-bind:checked="requirements[option.field] === v" v-on:change="updateField(option, v)">
-                                <label class="form-check-label" v-bind:for="option.field + '-' + v">{{k}}</label>
+                    <div class="mappers">
+                        <div v-for="option in MapperOptions" class="mapper-container">
+                            <div class="card mapper-card">
+                                <div class="row card-body">
+                                    <div class="col-10">
+                                        <div v-if="option.type === 'dropdown'">
+                                            <div class="card-title">{{option.name}}</div>
+                                            <select class="form-select form-select-sm" v-on:change="updateField(option, parseInt($event.target.value, 10))">
+                                                <option v-for="(v, k) in option.options" v-bind:value="v">{{k}}</option>
+                                            </select>
+                                        </div>
+                                        <div v-else-if="option.type === 'radio'">
+                                            <strong>{{option.name}}</strong>: 
+                                            <div v-for="(v, k) in option.options" class="form-check">
+                                                <input class="form-check-input" type="radio" v-bind:name="option.field" v-bind:id="option.field + '-' + v" v-bind:value="v" v-bind:checked="requirements[option.field] === v" v-on:change="updateField(option, v)">
+                                                <label class="form-check-label" v-bind:for="option.field + '-' + v">{{k}}</label>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <strong style="color: red">UNKNOWN TYPE {{option.type}}</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <button class="btn btn-info btn-sm info-btn" v-on:click="tipVisibility[option.field] = !tipVisibility[option.field]; $event.stopPropagation();">Info</button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div v-else>
-                            <strong style="color: red">UNKNOWN TYPE {{option.type}}</strong>
+
+                            <div class="card info-area" v-show="tipVisibility[option.field]" v-on:click="$event.stopPropagation();"><!-- Prevent clicks inside from closing the dialog -->
+                                <div class="card-header">{{option.name}}</div>
+                                <div class="card-body">
+                                    {{option.description}}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -89,8 +127,9 @@ app.component('base-component', {
                             <div v-bind:id="'accordion-collapse-' + mapper.id" class="accordion-collapse collapse" v-bind:aria-labelledby="'accordion-' + mapper.id">
                             <div class="accordion-body">
                                 <ul>
-                                    <li v-for="opt in MapperOptions">{{opt.name}}: <strong>{{(Object.entries(opt.options).find(e => e[1] === mapper[opt.field]))[0]}}</strong></li>
+                                    <li v-for="opt in MapperOptions">{{opt.name}}: <strong>{{mapperOptionValue(mapper, opt)}}</strong></li>
                                 </ul>
+                                <p>{{mapper.notes}}</p>
                             </div>
                         </div>
                     </div>

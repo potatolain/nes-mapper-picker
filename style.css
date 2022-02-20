@@ -1,0 +1,33 @@
+.mappers {
+    display: flex;
+    width: 100%;
+    flex-flow: wrap;
+}
+
+.mapper-container {
+    position: relative;
+}
+
+.mapper-container .info-area {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 270px;
+    width: 270px;
+}
+
+.mapper-container .mapper-card {
+    width: 270px;
+    margin: 5px;
+    display: inline-block;
+    min-height: 150px;
+}
+
+.mapper-container .info-btn {
+    margin-left: -8px;
+    margin-top: -24px;
+}
+
+.mapper-container  {
+    font-size: 90%;
+}
