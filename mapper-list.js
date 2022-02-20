@@ -210,7 +210,7 @@ const MapperList = [{
     maxPrg: 16,
     maxChr: 32,
     chrRam: false,
-    prgRam: 1,
+    prgRam: 4,
     adhocMirror: true,
     irqSupport: true,
     '4screenMirror': false,
