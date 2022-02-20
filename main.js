@@ -83,7 +83,7 @@ app.component('base-component', {
                                             </select>
                                         </div>
                                         <div v-else-if="option.type === 'radio'">
-                                            <strong>{{option.name}}</strong>: 
+                                            <div class="card-title">{{option.name}}</div>
                                             <div v-for="(v, k) in option.options" class="form-check">
                                                 <input class="form-check-input" type="radio" v-bind:name="option.field" v-bind:id="option.field + '-' + v" v-bind:value="v" v-bind:checked="requirements[option.field] === v" v-on:change="updateField(option, v)">
                                                 <label class="form-check-label" v-bind:for="option.field + '-' + v">{{k}}</label>
@@ -138,7 +138,7 @@ app.component('base-component', {
             </div>
         </div>
         <footer>
-            Copyright 2022 <a href="https://indiegameweb.com" target="_blank">IndieGameWeb</a>. 
+            Copyright 2022 <a href="https://indiegameweb.com" target="_blank">IndieGameWeb</a>. (<a href="https://github.com/cppchriscpp/nes-mapper-picker" target="_blank">View on GitHub</a>)
         </footer>
     `
 });
