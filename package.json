@@ -1,0 +1,26 @@
+{
+  "name": "nes-mapper-picker",
+  "version": "1.0.0",
+  "description": "Simple html-based mapper picker for the nes. Find out what mapper meets your needs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "browser-refresh ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cppchriscpp/nes-mapper-picker.git"
+  },
+  "keywords": [
+    "nes",
+    "mapper",
+    "development",
+    "nesdev"
+  ],
+  "author": "cppchriscpp",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cppchriscpp/nes-mapper-picker/issues"
+  },
+  "homepage": "https://github.com/cppchriscpp/nes-mapper-picker#readme"
+}
