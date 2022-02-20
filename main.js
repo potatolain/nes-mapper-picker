@@ -43,7 +43,6 @@ app.component('base-component', {
         },
         updateField(option, v) {
             this.requirements[option.field] = isNaN(v) ? null : v;
-            console.info('updated', this.requirements, arguments);
             this.recalculateFeasibleMappers();
         },
         mapperOptionValue(mapper, opt) {
@@ -138,6 +137,9 @@ app.component('base-component', {
                 </div>
             </div>
         </div>
+        <footer>
+            Copyright 2022 <a href="https://indiegameweb.com" target="_blank">IndieGameWeb</a>. 
+        </footer>
     `
 });
 app.mount("#app")
