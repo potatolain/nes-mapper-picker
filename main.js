@@ -10,12 +10,23 @@ app.component('base-component', {
         }
     },
     created: function() {
+        const urlParams = Object.fromEntries(new URLSearchParams(window.location.search));
         this.MapperOptions.forEach(option => {
             // Default everything to don't care.
-            this.requirements[option.field] = option.defaultOption ?? null;
+            if (urlParams[option.field]) {
+                const p = urlParams[option.field];
+                let value = p;
+                if (p === 'true' || p === 'false') { value = p === 'true' }
+                else if (p === 'null') { value = null }
+                else { value = parseInt(p, 10); }
+                this.requirements[option.field] = value;
+            } else {
+                this.requirements[option.field] = option.defaultOption ?? null;
+            }
             this.tipVisibility[option.field] = false;
         });
         this.recalculateFeasibleMappers();
+        
     },
     mounted: function() {
         document.addEventListener('click', this.outsideClick);
@@ -44,6 +55,7 @@ app.component('base-component', {
         updateField(option, v) {
             this.requirements[option.field] = isNaN(v) ? null : v;
             this.recalculateFeasibleMappers();
+            this.rebuildUrl();
         },
         mapperOptionValue(mapper, opt) {
             const foundOption = Object.entries(opt.options).find(e => e[1] === mapper[opt.field])
@@ -58,6 +70,10 @@ app.component('base-component', {
             this.MapperOptions.forEach(option => {
                 this.tipVisibility[option.field] = false;
             });
+        },
+        rebuildUrl() {
+            const url = '?' + Object.entries(this.requirements).map(r => r[0] + '=' + r[1]).join('&');
+            history.replaceState({}, 'Mapper Picker', url);
         }
     },
     // NOTE: Use es6-string-html module for vs code to make this highlight
@@ -78,14 +94,14 @@ app.component('base-component', {
                                     <div class="col-10">
                                         <div v-if="option.type === 'dropdown'">
                                             <div class="card-title">{{option.name}}</div>
-                                            <select class="form-select form-select-sm" v-on:change="updateField(option, parseInt($event.target.value, 10))">
+                                            <select class="form-select form-select-sm" v-model="requirements[option.field]" v-on:change="updateField(option, parseInt($event.target.value, 10))">
                                                 <option v-for="(v, k) in option.options" v-bind:value="v">{{k}}</option>
                                             </select>
                                         </div>
                                         <div v-else-if="option.type === 'radio'">
                                             <div class="card-title">{{option.name}}</div>
                                             <div v-for="(v, k) in option.options" class="form-check">
-                                                <input class="form-check-input" type="radio" v-bind:name="option.field" v-bind:id="option.field + '-' + v" v-bind:value="v" v-bind:checked="requirements[option.field] === v" v-on:change="updateField(option, v)">
+                                                <input class="form-check-input" type="radio" v-model="requirements[option.field]" v-bind:name="option.field" v-bind:id="option.field + '-' + v" v-bind:value="v" v-bind:checked="requirements[option.field] === v" v-on:change="updateField(option, v)">
                                                 <label class="form-check-label" v-bind:for="option.field + '-' + v">{{k}}</label>
                                             </div>
                                         </div>
