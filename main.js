@@ -6,7 +6,8 @@ app.component('base-component', {
             requirements: [],
             tipVisibility: [],
             feasibleMappers: [],
-            hideUnavailableMappers: false
+            hideUnavailableMappers: false,
+            mapperProblems: []
         }
     },
     created: function() {
@@ -33,7 +34,9 @@ app.component('base-component', {
     },
     methods: {
         recalculateFeasibleMappers() {
+            let mapperProblems = [];
             let mappers = this.MapperList.filter(mapper => {
+                mapperProblems[mapper.name] = {};
                 let mapperIsValid = true;
                 Object.keys(this.requirements).forEach(fieldName => {
                     const fieldValue = this.requirements[fieldName];
@@ -42,15 +45,16 @@ app.component('base-component', {
                     // If it's null, we do not care. Continue.
                     if (fieldValue === null) { return; }
 
-                    if (option.comparison === 'max' && fieldValue > mapper[fieldName]) { mapperIsValid = false; }
-                    else if (option.comparison === 'exact' && fieldValue !== mapper[fieldName]) { mapperIsValid = false; }
-                    else if (option.comparison === 'min' && fieldValue < mapper[fieldName]) { mapperIsValid = false; }
+                    if (option.comparison === 'max' && fieldValue > mapper[fieldName]) { mapperIsValid = false; mapperProblems[mapper.name][fieldName] = true; }
+                    else if (option.comparison === 'exact' && fieldValue !== mapper[fieldName]) { mapperIsValid = false; mapperProblems[mapper.name][fieldName] = true; }
+                    else if (option.comparison === 'min' && fieldValue < mapper[fieldName]) { mapperIsValid = false; mapperProblems[mapper.name][fieldName] = true; }
 
                 });
                 return mapperIsValid;
             }).map(m => m.name);
 
             this.feasibleMappers = mappers;
+            this.mapperProblems = mapperProblems;
         },
         updateField(option, v) {
             this.requirements[option.field] = isNaN(v) ? null : v;
@@ -142,7 +146,7 @@ app.component('base-component', {
                             <div v-bind:id="'accordion-collapse-' + mapper.id" class="accordion-collapse collapse" v-bind:aria-labelledby="'accordion-' + mapper.id">
                             <div class="accordion-body">
                                 <ul>
-                                    <li v-for="opt in MapperOptions">{{opt.name}}: <strong>{{mapperOptionValue(mapper, opt)}}</strong></li>
+                                    <li v-for="opt in MapperOptions" v-bind:class="{'text-danger': mapperProblems[mapper.name][opt.field]}">{{opt.name}}: <strong>{{mapperOptionValue(mapper, opt)}}</strong></li>
                                 </ul>
                                 <p>{{mapper.notes}}</p>
                             </div>
