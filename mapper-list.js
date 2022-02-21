@@ -203,6 +203,26 @@ const MapperList = [{
 
     notes: `This is an early homebrew mapper, designed by Membler Industries. It is meant to be a cheap board that allows bankswitching and a few other cheap but powerful features.
             Of note, it always uses 4-screen mirroring, and bankswitched chr ram.`
+}, {
+    id: 34,
+    name: 'bnrom',
+    maxPrg: 32,
+    maxChr: 1,
+    chrRam: true,
+    prgRam: 0,
+    adhocMirror: false,
+    irqSupport: false,
+    '4screenMirror': false,
+    '1screenMirror': false,
+    minChrWindow: 8,
+    minPrgWindow: 16,
+    expansionAudio: false,
+    cartAvailable: true,
+    expandedTiles: false,
+    selfFlashable: false,
+
+    notes: `This is a powerful mapper, similar to mmc3, but with the addition of expansion audio. This was used in sunsoft games back in the day. InfiniteNESLives has a modern verison of this board
+            that has been up for sale in the past. Note that it has a cpu cycle counter, but no scanline counter. Note that FME-7 supports 512k prg, however 5B only supports 256k prg.`
 
 }, {
     id: 69,
