@@ -66,7 +66,7 @@ const MapperOptions = [
         name: 'CHR Window Size',
         description: 'Allows switching the window for chr data at a more fine-grained size than the default.',
         type: 'dropdown',
-        options: {'Don\'t care': null, '8k or less (both nametables)': 8, '4k or less (one nametable)': 4, '2k or less (half a nametable)': 2, '1k or less (1/4 a nametable': 1},
+        options: {'Don\'t care': null, '8k or less (2 pattern tables)': 8, '4k or less (1 pattern table)': 4, '2k or less (1/2 pattern table)': 2, '1k or less (1/4 pattern table)': 1},
         field: 'minChrWindow',
         comparison: 'min',
 
