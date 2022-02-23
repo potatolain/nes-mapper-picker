@@ -136,10 +136,10 @@ app.component('base-component', {
                         <label class="form-check-label" for="hide-mappers">Hide Unusable mappers</label>
 
                     </div>
-                    <div class="accordion" v-for="mapper in MapperList" v-show="feasibleMappers.includes(mapper.name) || !hideUnavailableMappers">
+                    <div class="accordion mapper-accordion" v-for="mapper in MapperList" v-show="feasibleMappers.includes(mapper.name) || !hideUnavailableMappers">
                         <div class="accordion-item">
                             <h2 class="accordion-header" v-bind:id="'accordion-' + mapper.id">
-                                <button class="accordion-button collapsed" v-bind:class="{'bg-success': feasibleMappers.includes(mapper.name), 'bg-secondary': !feasibleMappers.includes(mapper.name)}" type="button" data-bs-toggle="collapse" v-bind:data-bs-target="'#accordion-collapse-' + mapper.id" aria-expanded="true" aria-controls="collapseOne">
+                                <button class="accordion-button collapsed bg-opacity-50" v-bind:class="{'bg-success': feasibleMappers.includes(mapper.name), 'bg-secondary': !feasibleMappers.includes(mapper.name)}" type="button" data-bs-toggle="collapse" v-bind:data-bs-target="'#accordion-collapse-' + mapper.id" aria-expanded="true" aria-controls="collapseOne">
                                     {{ mapper.name }}
                                 </button>
                             </h2>

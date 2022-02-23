@@ -32,6 +32,11 @@
     font-size: 90%;
 }
 
+.mapper-accordion .accordion-button {
+    /* Make the selected color go away, it looks silly */
+    color: #212529 !important;
+}
+
 footer {
     margin-top: 24px;
     text-align: center;
