@@ -17,14 +17,14 @@ workings of the tool.
 
 ## Adding a feature
 
-Features are written in [mapper-options.js](./mapper-options.js). Add an option here first,
+Features are written in [mapper-features.js](./mapper-features.js). Add an option here first,
 then add a value for the `field` you specify to each mapper in the mapper list in 
 [mapper-list.js](./mapper-list.js).
 
 ## Adding a mapper
 
 Mappers are written in [mapper-list.js](./mapper-list.js). The have a number of 
-fields, which line up to the features defined in [mapper-options.js](./mapper-options.js).
+fields, which line up to the features defined in [mapper-features.js](./mapper-features.js).
 
 ## License
 

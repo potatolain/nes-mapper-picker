@@ -1,7 +1,7 @@
 const yesNo = {'Don\'t care': null, Yes: true, No: false};
 
 
-const MapperOptions = [
+const MapperFeatures = [
     {
         name: 'PRG Data Size',
         description: `The amount of program data available to the game. 

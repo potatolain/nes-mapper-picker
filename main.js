@@ -1,8 +1,12 @@
+/**
+ * This is the main application component. Normally you'd probably want to create a few components, but I really rushed
+ * this together, so I didn't bother. I don't expect this to grow much, so hopefully it's still not too hard to follow.
+ */
 app.component('base-component', {
     data() {
         return {
             MapperList,
-            MapperOptions,
+            MapperFeatures,
             requirements: [],
             tipVisibility: [],
             feasibleMappers: [],
@@ -12,8 +16,8 @@ app.component('base-component', {
     },
     created: function() {
         const urlParams = Object.fromEntries(new URLSearchParams(window.location.search));
-        this.MapperOptions.forEach(option => {
-            // Default everything to don't care.
+        this.MapperFeatures.forEach(option => {
+            // Load the parameters on the page from the url, if it's set
             if (urlParams[option.field]) {
                 const p = urlParams[option.field];
                 let value = p;
@@ -22,45 +26,58 @@ app.component('base-component', {
                 else { value = parseInt(p, 10); }
                 this.requirements[option.field] = value;
             } else {
+                // Otherwise either set the result to the default value on the option, or null (which is "don't care")
                 this.requirements[option.field] = option.defaultOption ?? null;
             }
+
+            // Default all of the tips for options to be hidden
             this.tipVisibility[option.field] = false;
         });
         this.recalculateFeasibleMappers();
         
     },
     mounted: function() {
+        // Close tips that are on screen unless something else catches the click
         document.addEventListener('click', this.outsideClick);
     },
     methods: {
+        // Iterate through all available mappers, and filter the visible/selected ones based on our options
         recalculateFeasibleMappers() {
             let mapperProblems = [];
+            // Find any problems with each mapper, based on each options.
             let mappers = this.MapperList.filter(mapper => {
                 mapperProblems[mapper.name] = {};
                 let mapperIsValid = true;
+                // Go through all of the requirements that the user set using the ui
                 Object.keys(this.requirements).forEach(fieldName => {
                     const fieldValue = this.requirements[fieldName];
-                    const option = this.MapperOptions.find(f => f.field === fieldName);
+                    const option = this.MapperFeatures.find(f => f.field === fieldName);
                     
                     // If it's null, we do not care. Continue.
                     if (fieldValue === null) { return; }
 
-                    if (option.comparison === 'max' && fieldValue > mapper[fieldName]) { mapperIsValid = false; mapperProblems[mapper.name][fieldName] = true; }
-                    else if (option.comparison === 'exact' && fieldValue !== mapper[fieldName]) { mapperIsValid = false; mapperProblems[mapper.name][fieldName] = true; }
-                    else if (option.comparison === 'min' && fieldValue < mapper[fieldName]) { mapperIsValid = false; mapperProblems[mapper.name][fieldName] = true; }
+                    // Test the comparison the user requested with what's in the mapper.
+                    if ( (option.comparison === 'max' && fieldValue > mapper[fieldName]) ||
+                         (option.comparison === 'exact' && fieldValue !== mapper[fieldName]) ||
+                         (option.comparison === 'min' && fieldValue < mapper[fieldName]) ) { 
+                             mapperIsValid = false; 
+                             mapperProblems[mapper.name][fieldName] = true; 
+                    }
 
                 });
                 return mapperIsValid;
-            }).map(m => m.name);
+            }).map(m => m.name); // Take the list of mappers and reduce it to a list of mapper names
 
             this.feasibleMappers = mappers;
             this.mapperProblems = mapperProblems;
         },
+        // Called whenever you update a field in the ui, this updates the requirements object
         updateField(option, v) {
             this.requirements[option.field] = isNaN(v) ? null : v;
             this.recalculateFeasibleMappers();
             this.rebuildUrl();
         },
+        // Create the string we show in the ui for a given option on a given mapper.
         mapperOptionValue(mapper, opt) {
             const foundOption = Object.entries(opt.options).find(e => e[1] === mapper[opt.field])
             if (foundOption) {
@@ -70,17 +87,19 @@ app.component('base-component', {
                 return 'Unknown (app error)';
             }
         },
+        // Hide all tips when the user clicks the main application.
         outsideClick() {
-            this.MapperOptions.forEach(option => {
+            this.MapperFeatures.forEach(option => {
                 this.tipVisibility[option.field] = false;
             });
         },
+        // Put all of the paramters in the requirements array into the url, to be reconstructed in the constructor when the page loads.
         rebuildUrl() {
             const url = '?' + Object.entries(this.requirements).map(r => r[0] + '=' + r[1]).join('&');
             history.replaceState({}, 'Mapper Picker', url);
         }
     },
-    // NOTE: Use es6-string-html module for vs code to make this highlight
+    // NOTE: Use es6-string-html vscode plugin to make this highlight
     template: /*html*/`
         <div class="container">
             <div class="row">
@@ -92,7 +111,7 @@ app.component('base-component', {
                 <div class="col-sm-6 col-md-8 col-lg-8">
                     <h3>Requirements</h3>
                     <div class="mappers">
-                        <div v-for="option in MapperOptions" class="mapper-container">
+                        <div v-for="option in MapperFeatures" class="mapper-container">
                             <div class="card mapper-card">
                                 <div class="row card-body">
                                     <div class="col-10">
@@ -146,7 +165,7 @@ app.component('base-component', {
                             <div v-bind:id="'accordion-collapse-' + mapper.id" class="accordion-collapse collapse" v-bind:aria-labelledby="'accordion-' + mapper.id">
                             <div class="accordion-body">
                                 <ul>
-                                    <li v-for="opt in MapperOptions" v-bind:class="{'text-danger': mapperProblems[mapper.name][opt.field]}">{{opt.name}}: <strong>{{mapperOptionValue(mapper, opt)}}</strong></li>
+                                    <li v-for="opt in MapperFeatures" v-bind:class="{'text-danger': mapperProblems[mapper.name][opt.field]}">{{opt.name}}: <strong>{{mapperOptionValue(mapper, opt)}}</strong></li>
                                 </ul>
                                 <p>{{mapper.notes}}</p>
                             </div>
