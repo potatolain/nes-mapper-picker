@@ -15,6 +15,17 @@ This hopes to be exhaustive, and also present the data in such a way that it can
 extended with more options or more mappers with minimal knowledge of the inner 
 workings of the tool.
 
+## Running it locally
+
+This really just needs a webserver - any server will do, as long as the application is at root of the domain.
+(Or you can add a `<base href="/blah/">` tag to `index.html`).
+
+With python you can use `python -m SimpleHTTPServer` or `python3 -m http.server` to start a server in the current
+directory.
+
+If you have node installed, you can use `npx http-server .`
+
+
 ## Adding a feature
 
 Features are written in [mapper-features.js](./mapper-features.js). Add an option here first,
