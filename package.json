@@ -7,20 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "browser-refresh ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/cppchriscpp/nes-mapper-picker.git"
-  },
   "keywords": [
     "nes",
     "mapper",
     "development",
     "nesdev"
   ],
-  "author": "cppchriscpp",
+  "author": "Indie GameWeb",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/cppchriscpp/nes-mapper-picker/issues"
-  },
-  "homepage": "https://github.com/cppchriscpp/nes-mapper-picker#readme"
+  "homepage": "https://mapper.nes.science"
 }

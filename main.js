@@ -177,7 +177,7 @@ app.component('base-component', {
             </div>
         </div>
         <footer>
-            Copyright 2022 <a href="https://indiegameweb.com" target="_blank">IndieGameWeb</a>. (<a href="https://github.com/cppchriscpp/nes-mapper-picker" target="_blank">View on GitHub</a>)
+            Copyright 2022 <a href="https://indiegameweb.com" target="_blank">IndieGameWeb</a>. (<a href="https://gh.nes.science/nes-mapper-picker" target="_blank">View on GitHub</a>)
         </footer>
     `
 });
